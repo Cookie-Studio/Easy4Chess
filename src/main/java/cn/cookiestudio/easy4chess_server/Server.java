@@ -1,8 +1,10 @@
 package cn.cookiestudio.easy4chess_server;
 
 import cn.cookiestudio.easy4chess_server.network.ServerUdp;
+import cn.cookiestudio.easy4chess_server.network.listener.DefaultListener;
 import cn.cookiestudio.easy4chess_server.network.listener.ListenerManager;
 import cn.cookiestudio.easy4chess_server.scheduler.Scheduler;
+import cn.cookiestudio.easy4chess_server.user.UserDataConfig;
 import cn.cookiestudio.easy4chess_server.utils.Config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
@@ -27,7 +29,7 @@ public class Server {
     private ListenerManager listenerManager = new ListenerManager();
     private ServerUdp serverUdp;
     private Config serverSets;
-    private Config userData;
+    private UserDataConfig userData;
     private InetSocketAddress serverAddress;
 
     public static void main(String[] args) {
@@ -38,7 +40,7 @@ public class Server {
         this.logger.info("Server starting...");
         instance = this;
         this.loadServerYml();
-        this.loadUserData();
+        this.userData = new UserDataConfig();
         try {
             this.serverAddress = new InetSocketAddress(InetAddress.getByName((String)this.serverSets.get("ip")), (int)this.serverSets.get("port"));
             this.serverUdp = new ServerUdp(this.serverAddress);
@@ -51,6 +53,9 @@ public class Server {
         this.scheduler = new Scheduler();
         this.scheduler.start();
         this.getLogger().info("Successfully started scheduler");
+        this.registerDefaultListener();
+        this.getLogger().info("Successfully registered default listener");
+
     }
 
     public ListenerManager getListenerManager() {
@@ -65,12 +70,12 @@ public class Server {
         return serverUdp;
     }
 
-    public Config getServerSets() {
-        return serverSets;
+    public UserDataConfig getUserData() {
+        return userData;
     }
 
-    public Config getUserData() {
-        return userData;
+    public Config getServerSets() {
+        return serverSets;
     }
 
     public InetSocketAddress getServerAddress() {
@@ -126,18 +131,7 @@ public class Server {
         serverSets = new Config(ymlPath);
     }
 
-    private void loadUserData(){
-        Path ymlPath = Paths.get(this.serverPath.toString(), "userdata.yml");
-        if (!Files.exists(ymlPath)){
-            logger.error("Can't find userdata.yml,creating new file....");
-            try {
-                Files.copy(Server.class.getClassLoader().getResourceAsStream("userdata.yml"),ymlPath);
-            } catch (IOException e) {
-                e.printStackTrace();
-                logger.fatal("Can't create file,server will crash...");
-                this.stop(1);
-            }
-        }
-        userData = new Config(ymlPath);
+    private void registerDefaultListener(){
+        this.getListenerManager().registerListener(DefaultListener.class);
     }
 }

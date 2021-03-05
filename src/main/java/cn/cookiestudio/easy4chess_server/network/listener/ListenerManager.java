@@ -25,7 +25,7 @@ public class ListenerManager {
         return methodMap;
     }
 
-    public void registerListener(Class<Listener> listener){
+    public void registerListener(Class<? extends Listener> listener){
         for(Method method : listener.getMethods()){
             if (!method.isAnnotationPresent(PacketHandler.class)){
                 continue;
