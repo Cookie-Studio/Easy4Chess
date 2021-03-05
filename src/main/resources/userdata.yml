@@ -1,0 +1,4 @@
+daoge_cmd:
+  password: 123456
+  win-count: 10000
+  lose-count: 0
