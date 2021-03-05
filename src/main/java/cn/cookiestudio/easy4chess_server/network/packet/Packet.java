@@ -2,10 +2,13 @@ package cn.cookiestudio.easy4chess_server.network.packet;
 
 import cn.cookiestudio.easy4chess_server.network.listener.Cancellable;
 import cn.cookiestudio.easy4chess_server.network.listener.PacketException;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 public abstract class Packet{
 
+    @JsonDeserialize
     protected int pid;
+
     protected boolean isCancelled = false;
 
     public int getPid(){

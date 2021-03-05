@@ -27,6 +27,7 @@ public class Server {
     private ListenerManager listenerManager = new ListenerManager();
     private ServerUdp serverUdp;
     private Config serverSets;
+    private Config userData;
     private InetSocketAddress serverAddress;
 
     public static void main(String[] args) {
@@ -37,6 +38,7 @@ public class Server {
         this.logger.info("Server starting...");
         instance = this;
         this.loadServerYml();
+        this.loadUserData();
         try {
             this.serverAddress = new InetSocketAddress(InetAddress.getByName((String)this.serverSets.get("ip")), (int)this.serverSets.get("port"));
             this.serverUdp = new ServerUdp(this.serverAddress);
@@ -53,6 +55,26 @@ public class Server {
 
     public ListenerManager getListenerManager() {
         return listenerManager;
+    }
+
+    public Path getServerPath() {
+        return serverPath;
+    }
+
+    public ServerUdp getServerUdp() {
+        return serverUdp;
+    }
+
+    public Config getServerSets() {
+        return serverSets;
+    }
+
+    public Config getUserData() {
+        return userData;
+    }
+
+    public InetSocketAddress getServerAddress() {
+        return serverAddress;
     }
 
     public Scheduler getScheduler() {
@@ -102,5 +124,20 @@ public class Server {
             }
         }
         serverSets = new Config(ymlPath);
+    }
+
+    private void loadUserData(){
+        Path ymlPath = Paths.get(this.serverPath.toString(), "userdata.yml");
+        if (!Files.exists(ymlPath)){
+            logger.error("Can't find userdata.yml,creating new file....");
+            try {
+                Files.copy(Server.class.getClassLoader().getResourceAsStream("userdata.yml"),ymlPath);
+            } catch (IOException e) {
+                e.printStackTrace();
+                logger.fatal("Can't create file,server will crash...");
+                this.stop(1);
+            }
+        }
+        userData = new Config(ymlPath);
     }
 }
