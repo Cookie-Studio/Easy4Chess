@@ -24,8 +24,12 @@ public class UserDataConfig {
         this.config.save();
     }
 
-    public boolean containUser(User user){
-        return this.config.exists(user.getUserName());
+    public boolean containUser(String user){
+        return this.config.exists(user);
+    }
+
+    public boolean verifyPassword(String user, String password){
+        return this.config.getString(user + ".password").equals(password);
     }
 
     private void loadUserData(){

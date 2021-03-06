@@ -6,35 +6,21 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 
-public class RequestLoginPacket extends Packet{
+public class RequestServerInfoPacket extends Packet{
 
-    @JsonDeserialize
-    private String userName;
-    @JsonDeserialize
-    private String password;
     @JsonDeserialize
     private String address;
     @JsonDeserialize
     private int port;
 
-    public RequestLoginPacket(String userName,String passWord,InetSocketAddress socketAddress){
-        this.pid = 0;
-        this.userName = userName;
-        this.password = passWord;
+    public RequestServerInfoPacket(InetSocketAddress socketAddress){
+        this.pid = 2;
         this.address = socketAddress.getAddress().getHostName();
         this.port = socketAddress.getPort();
     }
 
-    public RequestLoginPacket(){
-        this.pid = 0;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public String getPassword() {
-        return password;
+    public RequestServerInfoPacket(){
+        this.pid = 2;
     }
 
     public InetSocketAddress getAddress() {

@@ -2,10 +2,13 @@ package cn.cookiestudio.easy4chess_server.network.packet;
 
 import cn.cookiestudio.easy4chess_server.network.listener.Cancellable;
 import cn.cookiestudio.easy4chess_server.network.listener.PacketException;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 public abstract class Packet{
 
+    @JsonSerialize
     @JsonDeserialize
     protected int pid;
 
@@ -16,9 +19,6 @@ public abstract class Packet{
     }
 
     public boolean isCancelled() {
-        if (!(this instanceof Cancellable)) {
-            throw new PacketException("Packet is not Cancellable");
-        }
         return isCancelled;
     }
 

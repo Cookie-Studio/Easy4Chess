@@ -4,6 +4,7 @@ import cn.cookiestudio.easy4chess_server.network.ServerUdp;
 import cn.cookiestudio.easy4chess_server.network.listener.DefaultListener;
 import cn.cookiestudio.easy4chess_server.network.listener.ListenerManager;
 import cn.cookiestudio.easy4chess_server.scheduler.Scheduler;
+import cn.cookiestudio.easy4chess_server.user.User;
 import cn.cookiestudio.easy4chess_server.user.UserDataConfig;
 import cn.cookiestudio.easy4chess_server.utils.Config;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +17,7 @@ import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 
 public class Server {
 
@@ -31,6 +33,7 @@ public class Server {
     private Config serverSets;
     private UserDataConfig userData;
     private InetSocketAddress serverAddress;
+    private HashMap<String, User> users = new HashMap<>();
 
     public static void main(String[] args) {
         new Server();
@@ -64,6 +67,20 @@ public class Server {
 
     public Path getServerPath() {
         return serverPath;
+    }
+
+    public HashMap<String, User> getUsers() {
+        return users;
+    }
+
+    public void addUser(User user){
+        this.users.put(user.getUserName(),user);
+    }
+
+    public boolean removeUser(User user){
+        if (this.users.containsKey(user.getUserName())) return false;
+        this.users.remove(user.getUserName());
+        return true;
     }
 
     public ServerUdp getServerUdp() {

@@ -32,17 +32,27 @@ public class ServerUdp {
                 Packet packet = null;
                 try {
                     ServerUdp.this.udpSocket.receive(udpPacket);
+                    Server.getInstance().getLogger().info("receive a packet");
+                    Server.getInstance().getLogger().info(new String(udpPacket.getData()));
                     JsonNode jsonNode = Server.getJsonMapper().readTree(udpPacket.getData());
                     if (!jsonNode.has("pid"))
                         continue;
-                    if (!PidInfo.getPidMap().containsKey(jsonNode.get("pid")))
+                    if (!PidInfo.getPidMap().containsKey(jsonNode.get("pid").asInt()))
                         continue;
-                    packet = Server.getJsonMapper().readValue(udpPacket.getData(), PidInfo.getPidMap().get(jsonNode.get("pid")));
+                    packet = Server.getJsonMapper().readValue(udpPacket.getData(), PidInfo.getPidMap().get(jsonNode.get("pid").asInt()));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
                 Server.getInstance().getListenerManager().callAllListener(packet);
             }
         }
+    }
+
+    public synchronized DatagramSocket getUdpSocket() {
+        return udpSocket;
+    }
+
+    public Thread getThread() {
+        return thread;
     }
 }
