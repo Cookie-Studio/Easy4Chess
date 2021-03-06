@@ -1,12 +1,15 @@
 package cn.cookiestudio.easy4chess_server.network.packet;
 
 import cn.cookiestudio.easy4chess_server.Server;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 public class ServerInfoPacket extends Packet{
 
+    @JsonDeserialize
     @JsonSerialize
     private int onlineCount;
+    @JsonDeserialize
     @JsonSerialize
     private String motd;
 

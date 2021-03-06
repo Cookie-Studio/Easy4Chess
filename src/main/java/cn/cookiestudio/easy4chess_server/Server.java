@@ -1,12 +1,13 @@
 package cn.cookiestudio.easy4chess_server;
 
-import cn.cookiestudio.easy4chess_server.network.ServerUdpReceive;
+import cn.cookiestudio.easy4chess_server.network.ServerUdp;
 import cn.cookiestudio.easy4chess_server.network.listener.DefaultListener;
 import cn.cookiestudio.easy4chess_server.network.listener.ListenerManager;
 import cn.cookiestudio.easy4chess_server.scheduler.Scheduler;
 import cn.cookiestudio.easy4chess_server.user.User;
 import cn.cookiestudio.easy4chess_server.user.UserDataConfig;
 import cn.cookiestudio.easy4chess_server.utils.Config;
+import cn.cookiestudio.easy4chess_server.utils.Utils;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -42,12 +43,11 @@ public class Server {
     private Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
     private Scheduler scheduler;
     private ListenerManager listenerManager = new ListenerManager();
-    private ServerUdpReceive serverUdpReceive;
+    private ServerUdp serverUdp;
     private Config serverSets;
     private UserDataConfig userData;
     private InetSocketAddress serverAddress;
     private HashMap<String, User> users = new HashMap<>();
-    private DatagramSocket packetSender;
     public static void main(String[] args) {
         new Server();
     }
@@ -59,18 +59,13 @@ public class Server {
         this.userData = new UserDataConfig();
         try {
             this.serverAddress = new InetSocketAddress(InetAddress.getByName((String)this.serverSets.get("ip")), (int)this.serverSets.get("port"));
-            this.serverUdpReceive = new ServerUdpReceive(this.serverAddress);
+            this.serverUdp = new ServerUdp(this.serverAddress);
         } catch (Exception e) {
             e.printStackTrace();
         }
         this.getLogger().info("Successfully loaded server info");
-        this.serverUdpReceive.start();
+        this.serverUdp.start();
         this.getLogger().info("Successfully started udp service");
-        try {
-            this.packetSender = new DatagramSocket(this.serverAddress.getPort() + 1,this.serverAddress.getAddress());
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
         this.scheduler = new Scheduler();
         this.scheduler.start();
         this.getLogger().info("Successfully started scheduler");
@@ -100,12 +95,8 @@ public class Server {
         return true;
     }
 
-    public DatagramSocket getPacketSender() {
-        return packetSender;
-    }
-
-    public ServerUdpReceive getServerUdpReceive() {
-        return serverUdpReceive;
+    public ServerUdp getServerUdp() {
+        return serverUdp;
     }
 
     public UserDataConfig getUserData() {
@@ -157,8 +148,7 @@ public class Server {
     }
 
     private void stop$1(){
-        this.getPacketSender().close();
-        this.getServerUdpReceive().close();
+        this.serverUdp.close();
     }
 
     private void loadServerYml(){

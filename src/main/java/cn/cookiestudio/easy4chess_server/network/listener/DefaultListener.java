@@ -5,7 +5,6 @@ import cn.cookiestudio.easy4chess_server.network.packet.*;
 import cn.cookiestudio.easy4chess_server.user.User;
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 
 public class DefaultListener implements Listener{
     @PacketHandler
@@ -15,18 +14,18 @@ public class DefaultListener implements Listener{
         //check if exist
         if (!Server.getInstance().getUserData().containUser(packet.getUserName())) {
             byte[] b = Server.getJsonMapper().writeValueAsBytes(new LoginStatePacket(LoginStatePacket.LoginStateEnum.NO_INFO));
-            Server.getInstance().getPacketSender().send(new DatagramPacket(b,0,b.length,user.getAddress()));
+            Server.getInstance().getServerUdp().getUdpSocket().send(new DatagramPacket(b,0,b.length,user.getAddress()));
         }
         //check password
         if (!Server.getInstance().getUserData().verifyPassword(user.getUserName(),user.getPassword())){
             byte[] b = Server.getJsonMapper().writeValueAsBytes(new LoginStatePacket(LoginStatePacket.LoginStateEnum.WRONG_PASSWORD));
-            Server.getInstance().getPacketSender().send(new DatagramPacket(b,0,b.length,user.getAddress()));
+            Server.getInstance().getServerUdp().getUdpSocket().send(new DatagramPacket(b,0,b.length,user.getAddress()));
         }
 
         Server.getInstance().addUser(user);
         //send success packet
         byte[] b = Server.getJsonMapper().writeValueAsBytes(new LoginStatePacket(LoginStatePacket.LoginStateEnum.SUCCESS));
-        Server.getInstance().getPacketSender().send(new DatagramPacket(b,0,b.length,user.getAddress()));
+        Server.getInstance().getServerUdp().getUdpSocket().send(new DatagramPacket(b,0,b.length,user.getAddress()));
     }
 
     @PacketHandler
@@ -34,7 +33,7 @@ public class DefaultListener implements Listener{
         Server.getInstance().getLogger().info("Received a RequestServerInfoPacket");
         ServerInfoPacket packet1 = new ServerInfoPacket(Server.getInstance());
         byte[] b = Server.getJsonMapper().writeValueAsBytes(packet1);
-        Server.getInstance().getPacketSender().send(new DatagramPacket(b,0,b.length,packet.getAddress()));
+        Server.getInstance().getServerUdp().getUdpSocket().send(new DatagramPacket(b,0,b.length,packet.getAddress()));
     }
 
     @PacketHandler
