@@ -25,12 +25,12 @@ public class ListenerManager {
         return methodMap;
     }
 
-    public void registerListener(Class<? extends Listener> listener){
-        for(Method method : listener.getMethods()){
+    public void registerListener(Listener listener){
+        for(Method method : listener.getClass().getMethods()){
             if (!method.isAnnotationPresent(PacketHandler.class)){
                 continue;
             }
-            getMethodMap().get(method.getAnnotation(PacketHandler.class).priority()).add(new ListenerMethod(method));
+            getMethodMap().get(method.getAnnotation(PacketHandler.class).priority()).add(new ListenerMethod(method,listener));
         }
     }
 
@@ -38,16 +38,16 @@ public class ListenerManager {
         for (int i = PriorityType.LOWEST; i<= PriorityType.HIGHEST; i++){
             for (ListenerMethod lm : getMethodMap().get(i)){
                 if (!packet.isCancelled())
-                    if (lm.isMatchEvent(packet))
+                    if (lm.isMatchPacket(packet))
                         try {
-                            lm.getMethod().invoke(packet);
+                            lm.getMethod().invoke(lm.getInstance(),packet);
                         } catch (Exception e) {
                             new PacketException(e).printStackTrace();
                         }
                 else
-                    if (lm.isMatchEvent(packet) && lm.isIgnoreCanceled())
+                    if (lm.isMatchPacket(packet) && lm.isIgnoreCanceled())
                         try {
-                            lm.getMethod().invoke(packet);
+                            lm.getMethod().invoke(lm.getInstance(),packet);
                         } catch (Exception e) {
                             new PacketException(e).printStackTrace();
                         }
@@ -58,6 +58,7 @@ public class ListenerManager {
         public int priority;
         public boolean isIgnoreCanceled;
         public Method method;
+        public Listener instance;
 
         public int getPriority() {
             return priority;
@@ -71,13 +72,18 @@ public class ListenerManager {
             return method;
         }
 
-        public ListenerMethod(Method method){
+        public Listener getInstance() {
+            return instance;
+        }
+
+        public ListenerMethod(Method method, Listener instance){
             PacketHandler annotation = method.getAnnotation(PacketHandler.class);
             this.method = method;
             this.isIgnoreCanceled = annotation.IgnoreCanceled();
             this.priority = annotation.priority();
+            this.instance = instance;
         }
-        public boolean isMatchEvent(Packet packet){
+        public boolean isMatchPacket(Packet packet){
             return this.method.getParameterTypes()[0] == packet.getClass();
         }
     }

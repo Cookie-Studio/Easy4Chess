@@ -1,5 +1,6 @@
 package cn.cookiestudio.easy4chess_server.network.packet;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.net.InetAddress;

@@ -10,11 +10,11 @@ import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
 import java.net.SocketException;
 
-public class ServerUdp {
+public class ServerUdpReceive {
     private Thread thread;
     private DatagramSocket udpSocket;
 
-    public ServerUdp(InetSocketAddress address) throws SocketException {
+    public ServerUdpReceive(InetSocketAddress address) throws SocketException {
         this.udpSocket = new DatagramSocket(address);
         this.thread = new Thread(new Runnable());
     }
@@ -31,8 +31,8 @@ public class ServerUdp {
                 DatagramPacket udpPacket = new DatagramPacket(buffer,0,512);
                 Packet packet = null;
                 try {
-                    ServerUdp.this.udpSocket.receive(udpPacket);
-                    Server.getInstance().getLogger().info("receive a packet");
+                    ServerUdpReceive.this.udpSocket.receive(udpPacket);
+                    Server.getInstance().getLogger().info("Receive a packet");
                     Server.getInstance().getLogger().info(new String(udpPacket.getData()));
                     JsonNode jsonNode = Server.getJsonMapper().readTree(udpPacket.getData());
                     if (!jsonNode.has("pid"))
@@ -54,5 +54,10 @@ public class ServerUdp {
 
     public Thread getThread() {
         return thread;
+    }
+
+    public void close(){
+        this.thread.interrupt();
+        this.udpSocket.close();
     }
 }

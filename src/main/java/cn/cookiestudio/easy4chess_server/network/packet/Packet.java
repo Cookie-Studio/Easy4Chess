@@ -12,24 +12,26 @@ public abstract class Packet{
     @JsonDeserialize
     protected int pid;
 
-    protected boolean isCancelled = false;
+    protected boolean cancelled = false;
 
     public int getPid(){
         return this.pid;
     }
 
     public boolean isCancelled() {
-        return isCancelled;
+        return cancelled;
     }
 
+    @JsonIgnore
     public void setCancelled() {
         setCancelled(true);
     }
 
+    @JsonIgnore
     public void setCancelled(boolean value) {
         if (!(this instanceof Cancellable)) {
             throw new PacketException("Packet is not Cancellable");
         }
-        isCancelled = value;
+        cancelled = value;
     }
 }
