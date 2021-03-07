@@ -3,12 +3,14 @@ package cn.cookiestudio.easy4chess_server.network.listener;
 import cn.cookiestudio.easy4chess_server.Server;
 import cn.cookiestudio.easy4chess_server.network.packet.*;
 import cn.cookiestudio.easy4chess_server.user.User;
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 
 public class DefaultListener implements Listener{
     @PacketHandler
-    public void onUserRequestLogin(RequestLoginPacket packet) throws IOException {
+    public void onRequestLogin(RequestLoginPacket packet) throws IOException {
         Server.getInstance().getLogger().info("Received a RequestLoginPacket");
         User user = new User(packet.getUserName(),packet.getPassword(),packet.getAddress());
         //check if exist
@@ -32,8 +34,7 @@ public class DefaultListener implements Listener{
     public void onRequestServerInfo(RequestServerInfoPacket packet) throws IOException {
         Server.getInstance().getLogger().info("Received a RequestServerInfoPacket");
         ServerInfoPacket packet1 = new ServerInfoPacket(Server.getInstance());
-        byte[] b = Server.getJsonMapper().writeValueAsBytes(packet1);
-        Server.getInstance().getServerUdp().getUdpSocket().send(new DatagramPacket(b,0,b.length,packet.getAddress()));
+        Server.getInstance().getServerUdp().sendData(Server.getJsonMapper().writeValueAsBytes(packet1),packet.getAddress());
     }
 
     @PacketHandler
@@ -43,5 +44,12 @@ public class DefaultListener implements Listener{
 
         //remove user
         Server.getInstance().removeUser(packet.getUser());
+    }
+
+    @PacketHandler
+    public void onRegisterInfo(RegisterInfoPacket packet) throws JsonProcessingException {
+        Server.getInstance().getLogger().info("Received a RegisterInfoPacket");
+        RegisterInfoStatePacket result = new RegisterInfoStatePacket(Server.getInstance().getUserData().registerUserInfo(packet.getUserName(),packet.getPassword()));
+        Server.getInstance().getServerUdp().sendData(Server.getJsonMapper().writeValueAsBytes(result),packet.getAddress());
     }
 }

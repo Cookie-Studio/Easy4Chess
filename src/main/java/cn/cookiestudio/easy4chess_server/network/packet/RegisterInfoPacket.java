@@ -44,4 +44,12 @@ public class RegisterInfoPacket extends Packet{
         }
         return null;
     }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public String getPassword() {
+        return password;
+    }
 }

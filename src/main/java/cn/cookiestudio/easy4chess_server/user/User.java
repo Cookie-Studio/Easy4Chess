@@ -1,8 +1,11 @@
 package cn.cookiestudio.easy4chess_server.user;
 
+import cn.cookiestudio.easy4chess_server.Server;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import java.net.DatagramSocket;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
 import java.net.InetSocketAddress;
 
 public class User {
@@ -47,5 +50,9 @@ public class User {
         this.userName = userName;
         this.password = password;
         this.address = address;
+    }
+
+    public void sendData(byte[] data){
+        Server.getInstance().getServerUdp().sendData(data, this.address);
     }
 }

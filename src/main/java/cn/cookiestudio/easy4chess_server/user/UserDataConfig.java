@@ -1,6 +1,8 @@
 package cn.cookiestudio.easy4chess_server.user;
 
 import cn.cookiestudio.easy4chess_server.Server;
+import cn.cookiestudio.easy4chess_server.network.packet.LoginStatePacket;
+import cn.cookiestudio.easy4chess_server.network.packet.RegisterInfoStatePacket;
 import cn.cookiestudio.easy4chess_server.utils.Config;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -30,6 +32,17 @@ public class UserDataConfig {
 
     public boolean verifyPassword(String user, String password){
         return this.config.getString(user + ".password").equals(password);
+    }
+
+    public RegisterInfoStatePacket.RegisterInfoStateEnum registerUserInfo(String user, String password){
+        if (this.config.exists(user))
+            return RegisterInfoStatePacket.RegisterInfoStateEnum.ALREADY_EXIST;
+        HashMap map = new HashMap();
+        map.put("win-count",0);
+        map.put("lose-count",0);
+        map.put("password",password);
+        this.config.set(user,map);
+        return RegisterInfoStatePacket.RegisterInfoStateEnum.SUCCESS;
     }
 
     private void loadUserData(){

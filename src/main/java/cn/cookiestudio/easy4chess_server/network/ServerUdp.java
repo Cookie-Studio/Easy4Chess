@@ -56,6 +56,15 @@ public class ServerUdp {
         return thread;
     }
 
+    public void sendData(byte[] data, InetSocketAddress address){
+        DatagramPacket packet = new DatagramPacket(data,0,data.length,address);
+        try {
+            this.udpSocket.send(packet);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void close(){
         this.thread.interrupt();
         this.udpSocket.close();
