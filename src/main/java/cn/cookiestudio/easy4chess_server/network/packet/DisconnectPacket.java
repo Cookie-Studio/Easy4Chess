@@ -6,8 +6,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 public class DisconnectPacket extends Packet {
 
-    @JsonSerialize
-    @JsonDeserialize
     private User user;
 
     public DisconnectPacket(User user) {

@@ -1,12 +1,8 @@
 package cn.cookiestudio.easy4chess_server.network.packet;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 public class RegisterInfoStatePacket extends Packet {
 
-    @JsonSerialize
-    @JsonDeserialize
     private RegisterInfoStateEnum state;
 
     public RegisterInfoStatePacket(){

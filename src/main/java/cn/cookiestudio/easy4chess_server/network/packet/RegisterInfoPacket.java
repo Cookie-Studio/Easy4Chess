@@ -8,28 +8,17 @@ import java.net.UnknownHostException;
 
 public class RegisterInfoPacket extends Packet{
 
-    @JsonSerialize
-    @JsonDeserialize
     private String userName;
 
-    @JsonSerialize
-    @JsonDeserialize
     private String password;
 
-    @JsonSerialize
-    @JsonDeserialize
-    private String address;
+    private InetSocketAddress address;
 
-    @JsonSerialize
-    @JsonDeserialize
-    private int port;
-
-    public RegisterInfoPacket(String userName, String password, InetSocketAddress socketAddress){
+    public RegisterInfoPacket(String userName, String password, InetSocketAddress address){
         this.pid = 5;
         this.userName = userName;
         this.password = password;
-        this.address = socketAddress.getAddress().getHostName();
-        this.port = socketAddress.getPort();
+        this.address = address;
     }
 
     public RegisterInfoPacket(){
@@ -37,12 +26,7 @@ public class RegisterInfoPacket extends Packet{
     }
 
     public InetSocketAddress getAddress() {
-        try {
-            return new InetSocketAddress(InetAddress.getByName(this.address),this.port);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return address;
     }
 
     public String getUserName() {

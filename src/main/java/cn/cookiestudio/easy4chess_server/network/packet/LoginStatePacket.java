@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 public class LoginStatePacket extends Packet{
 
-    @JsonSerialize
-    @JsonDeserialize
     private LoginStateEnum state;
 
     public LoginStatePacket(LoginStateEnum state){

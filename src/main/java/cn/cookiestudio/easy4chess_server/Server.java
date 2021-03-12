@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import java.io.IOException;
@@ -24,14 +25,15 @@ import java.util.HashMap;
 
 public class Server {
 
-    private static ObjectMapper JSON_MAPPER = new ObjectMapper();
+    private static ObjectMapper JACKSON_JSON_MAPPER = new ObjectMapper();
+    private static Gson gson = new Gson();
     private static YAMLMapper YAML_MAPPER = new YAMLMapper();
 
-     static{
-        JSON_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        JSON_MAPPER.setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.NONE);
-        JSON_MAPPER.setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.NONE);
-        JSON_MAPPER.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+     static{//init jackson json
+        JACKSON_JSON_MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        JACKSON_JSON_MAPPER.setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.NONE);
+        JACKSON_JSON_MAPPER.setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.NONE);
+        JACKSON_JSON_MAPPER.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
     }
 
     private static Server instance = null;
@@ -112,8 +114,12 @@ public class Server {
         return scheduler;
     }
 
-    public static ObjectMapper getJsonMapper() {
-        return JSON_MAPPER;
+    public static ObjectMapper getJacksonJsonMapper() {
+        return JACKSON_JSON_MAPPER;
+    }
+
+    public static Gson getGson() {
+        return gson;
     }
 
     public static YAMLMapper getYamlMapper() {

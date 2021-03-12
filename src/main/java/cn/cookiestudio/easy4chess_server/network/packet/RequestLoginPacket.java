@@ -10,17 +10,12 @@ import java.net.UnknownHostException;
 
 public class RequestLoginPacket extends Packet{
 
-    @JsonSerialize
-    @JsonDeserialize
     private String userName;
-    @JsonSerialize
-    @JsonDeserialize
+
     private String password;
-    @JsonSerialize
-    @JsonDeserialize
+
     private String address;
-    @JsonSerialize
-    @JsonDeserialize
+
     private int port;
 
     public RequestLoginPacket(String userName,String passWord,InetSocketAddress socketAddress){

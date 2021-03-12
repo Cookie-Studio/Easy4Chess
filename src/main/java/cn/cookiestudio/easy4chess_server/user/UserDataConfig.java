@@ -1,7 +1,6 @@
 package cn.cookiestudio.easy4chess_server.user;
 
 import cn.cookiestudio.easy4chess_server.Server;
-import cn.cookiestudio.easy4chess_server.network.packet.LoginStatePacket;
 import cn.cookiestudio.easy4chess_server.network.packet.RegisterInfoStatePacket;
 import cn.cookiestudio.easy4chess_server.utils.Config;
 import java.io.IOException;
@@ -17,15 +16,6 @@ public class UserDataConfig {
         loadUserData();
     }
 
-    public void writeUserData(User user){
-        HashMap map = new HashMap();
-        map.put("win-count",user.getWinCount());
-        map.put("lose-count",user.getLoseCount());
-        map.put("password",user.getPassword());
-        this.config.set(user.getUserName(),map);
-        this.config.save();
-    }
-
     public boolean containUser(String user){
         return this.config.exists(user);
     }
@@ -34,23 +24,38 @@ public class UserDataConfig {
         return this.config.getString(user + ".password").equals(password);
     }
 
-    public RegisterInfoStatePacket.RegisterInfoStateEnum registerUserInfo(String user, String password){
+    public RegisterInfoStatePacket.RegisterInfoStateEnum writeUserData(String user, String password){
         if (this.config.exists(user))
             return RegisterInfoStatePacket.RegisterInfoStateEnum.ALREADY_EXIST;
         HashMap map = new HashMap();
         map.put("win-count",0);
         map.put("lose-count",0);
         map.put("password",password);
+        map.put("level",1);
         this.config.set(user,map);
+        this.config.save();
         return RegisterInfoStatePacket.RegisterInfoStateEnum.SUCCESS;
     }
 
-    private void loadUserData(){
+    public void writeKey(String key,Object value){
+        this.config.set(key,value);
+        this.config.save();
+    }
+
+    public Object getKey(String key){
+        return this.config.get(key);
+    }
+
+    public Config getConfig() {
+        return config;
+    }
+
+    private void loadUserData() {
         Path ymlPath = Paths.get(Server.getInstance().getServerPath().toString(), "userdata.yml");
-        if (!Files.exists(ymlPath)){
+        if (!Files.exists(ymlPath)) {
             Server.getInstance().getLogger().error("Can't find userdata.yml,creating new file....");
             try {
-                Files.copy(Server.class.getClassLoader().getResourceAsStream("userdata.yml"),ymlPath);
+                Files.copy(Server.class.getClassLoader().getResourceAsStream("userdata.yml"), ymlPath);
             } catch (IOException e) {
                 e.printStackTrace();
                 Server.getInstance().getLogger().fatal("Can't create file,server will crash...");

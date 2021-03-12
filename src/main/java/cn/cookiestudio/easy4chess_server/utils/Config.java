@@ -33,7 +33,7 @@ public class Config {
     static {
         SimpleModule module = new SimpleModule();
         module.addAbstractTypeMapping(Map.class, ConfigSection.class);
-        Server.getJsonMapper().registerModule(module);
+        Server.getJacksonJsonMapper().registerModule(module);
         Server.getYamlMapper().registerModule(module);
         JAVA_PROPS_MAPPER.registerModule(module);
     }
@@ -231,7 +231,7 @@ public class Config {
                         mapper = JAVA_PROPS_MAPPER;
                         break;
                     case JSON:
-                        mapper = Server.getJsonMapper();
+                        mapper = Server.getJacksonJsonMapper();
                         break;
                     case YAML:
                         mapper = Server.getYamlMapper();
@@ -524,7 +524,7 @@ public class Config {
                     mapper = JAVA_PROPS_MAPPER;
                     break;
                 case Config.JSON:
-                    mapper = Server.getJsonMapper();
+                    mapper = Server.getJacksonJsonMapper();
                     break;
                 case Config.YAML:
                     mapper = Server.getYamlMapper();
