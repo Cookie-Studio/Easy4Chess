@@ -7,7 +7,7 @@ public abstract class Packet{
 
     protected int pid;
 
-    protected boolean cancelled = false;
+    protected transient boolean cancelled = false;
 
     public int getPid(){
         return this.pid;

@@ -37,7 +37,7 @@ public class ServerUdp {
                 try {
                     ServerUdp.this.udpSocket.receive(udpPacket);
                     String str = new String(udpPacket.getData());
-                    Server.getInstance().getLogger().info("Receive a packet: \n" + str);
+                    Server.getInstance().getLogger().info("Receive a packet: " + str);
                     JsonReader jsonReader = new JsonReader(new StringReader(str));
                     jsonReader.setLenient(true);
                     JsonObject jsonObject = new JsonParser().parse(jsonReader).getAsJsonObject();
@@ -45,6 +45,8 @@ public class ServerUdp {
                         continue;
                     if (!PidInfo.getPidMap().containsKey(jsonObject.get("pid").getAsInt()))
                         continue;
+                    jsonReader = new JsonReader(new StringReader(str));//只能有效调用一次。
+                    jsonReader.setLenient(true);
                     packet = Server.getGSON().fromJson(jsonReader,PidInfo.getPidMap().get(jsonObject.get("pid").getAsInt()));
                 } catch (IOException e) {
                     e.printStackTrace();

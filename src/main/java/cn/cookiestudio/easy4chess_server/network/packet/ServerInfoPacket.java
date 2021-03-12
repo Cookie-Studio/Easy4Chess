@@ -14,6 +14,10 @@ public class ServerInfoPacket extends Packet{
         this.onlineCount = server.getUsers().size();
     }
 
+    public ServerInfoPacket() {
+        this.pid = 3;
+    }
+
     public int getOnlineCount() {
         return onlineCount;
     }

@@ -16,6 +16,10 @@ public class RequestServerInfoPacket extends Packet{
         this.port = socketAddress.getPort();
     }
 
+    public RequestServerInfoPacket() {
+        this.pid = 2;
+    }
+
     public InetSocketAddress getAddress() {
         try {
             return new InetSocketAddress(InetAddress.getByName(this.address),this.port);
