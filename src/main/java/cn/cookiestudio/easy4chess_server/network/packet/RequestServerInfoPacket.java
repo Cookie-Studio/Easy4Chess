@@ -1,14 +1,19 @@
 package cn.cookiestudio.easy4chess_server.network.packet;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 
 public class RequestServerInfoPacket extends Packet{
 
-    private InetSocketAddress address;
+    private String address;
+
+    private int port;
 
     public RequestServerInfoPacket(InetSocketAddress socketAddress){
         this.pid = 2;
-        this.address = socketAddress;
+        this.address = socketAddress.getAddress().getHostName();
+        this.port = socketAddress.getPort();
     }
 
     public RequestServerInfoPacket(){
@@ -16,6 +21,11 @@ public class RequestServerInfoPacket extends Packet{
     }
 
     public InetSocketAddress getAddress() {
-        return this.address;
+        try {
+            return new InetSocketAddress(InetAddress.getByName(this.address),this.port);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

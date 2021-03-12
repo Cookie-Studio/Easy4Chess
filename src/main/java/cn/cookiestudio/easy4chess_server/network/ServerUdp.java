@@ -3,7 +3,8 @@ package cn.cookiestudio.easy4chess_server.network;
 import cn.cookiestudio.easy4chess_server.Server;
 import cn.cookiestudio.easy4chess_server.network.packet.Packet;
 import cn.cookiestudio.easy4chess_server.network.packet.PidInfo;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -34,12 +35,12 @@ public class ServerUdp {
                     ServerUdp.this.udpSocket.receive(udpPacket);
                     Server.getInstance().getLogger().info("Receive a packet");
                     Server.getInstance().getLogger().info(new String(udpPacket.getData()));
-                    JsonNode jsonNode = Server.getJacksonJsonMapper().readTree(udpPacket.getData());
-                    if (!jsonNode.has("pid"))
+                    JsonObject jsonObject = new JsonParser().parse(new String(udpPacket.getData())).getAsJsonObject();
+                    if (!jsonObject.has("pid"))
                         continue;
-                    if (!PidInfo.getPidMap().containsKey(jsonNode.get("pid").asInt()))
+                    if (!PidInfo.getPidMap().containsKey(jsonObject.get("pid").getAsInt()))
                         continue;
-                    packet = Server.getJacksonJsonMapper().readValue(udpPacket.getData(), PidInfo.getPidMap().get(jsonNode.get("pid").asInt()));
+                    packet = Server.getJacksonJsonMapper().readValue(udpPacket.getData(), PidInfo.getPidMap().get(jsonObject.get("pid").getAsInt()));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -63,6 +64,7 @@ public class ServerUdp {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        Server.getInstance().getLogger().info("Send a data packet,content: " + new String(data));
     }
 
     public void close(){

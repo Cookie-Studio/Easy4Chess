@@ -10,7 +10,6 @@ import java.net.DatagramPacket;
 public class DefaultListener implements Listener{
     @PacketHandler
     public void onRequestLogin(RequestLoginPacket packet) throws IOException {
-        Server.getInstance().getLogger().info("Received a RequestLoginPacket");
         User user = new User(packet.getUserName(),packet.getPassword(),packet.getAddress());
         //check if exist
         if (!Server.getInstance().getUserData().containUser(packet.getUserName())) {
@@ -31,14 +30,12 @@ public class DefaultListener implements Listener{
 
     @PacketHandler
     public void onRequestServerInfo(RequestServerInfoPacket packet) throws IOException {
-        Server.getInstance().getLogger().info("Received a RequestServerInfoPacket");
         ServerInfoPacket packet1 = new ServerInfoPacket(Server.getInstance());
         Server.getInstance().getServerUdp().sendData(Server.getGson().toJson(packet1).getBytes(),packet.getAddress());
     }
 
     @PacketHandler
     public void onDisconnect(DisconnectPacket packet){
-        Server.getInstance().getLogger().info("Received a DisconnectPacket");
         //for future code...
 
         //remove user
@@ -47,7 +44,6 @@ public class DefaultListener implements Listener{
 
     @PacketHandler
     public void onRegisterInfo(RegisterInfoPacket packet) throws JsonProcessingException {
-        Server.getInstance().getLogger().info("Received a RegisterInfoPacket");
         RegisterInfoStatePacket result = new RegisterInfoStatePacket(Server.getInstance().getUserData().writeUserData(packet.getUserName(),packet.getPassword()));
         Server.getInstance().getServerUdp().sendData(Server.getGson().toJson(result).getBytes(),packet.getAddress());
     }

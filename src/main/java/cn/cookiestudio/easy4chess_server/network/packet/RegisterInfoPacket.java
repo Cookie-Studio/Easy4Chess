@@ -12,13 +12,16 @@ public class RegisterInfoPacket extends Packet{
 
     private String password;
 
-    private InetSocketAddress address;
+    private String address;
 
-    public RegisterInfoPacket(String userName, String password, InetSocketAddress address){
+    private int port;
+
+    public RegisterInfoPacket(String userName, String password, InetSocketAddress socketAddress){
         this.pid = 5;
         this.userName = userName;
         this.password = password;
-        this.address = address;
+        this.address = socketAddress.getAddress().getHostName();
+        this.port = socketAddress.getPort();
     }
 
     public RegisterInfoPacket(){
@@ -26,7 +29,12 @@ public class RegisterInfoPacket extends Packet{
     }
 
     public InetSocketAddress getAddress() {
-        return address;
+        try {
+            return new InetSocketAddress(InetAddress.getByName(this.address),this.port);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public String getUserName() {
