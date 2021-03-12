@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import java.io.IOException;
@@ -26,7 +27,7 @@ import java.util.HashMap;
 public class Server {
 
     private static ObjectMapper JACKSON_JSON_MAPPER = new ObjectMapper();
-    private static Gson gson = new Gson();
+    private static Gson GSON = new Gson();
     private static YAMLMapper YAML_MAPPER = new YAMLMapper();
 
      static{//init jackson json
@@ -34,7 +35,7 @@ public class Server {
         JACKSON_JSON_MAPPER.setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.NONE);
         JACKSON_JSON_MAPPER.setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.NONE);
         JACKSON_JSON_MAPPER.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
-    }
+     }
 
     private static Server instance = null;
     private int serverTick = 20;
@@ -118,8 +119,8 @@ public class Server {
         return JACKSON_JSON_MAPPER;
     }
 
-    public static Gson getGson() {
-        return gson;
+    public static Gson getGSON() {
+        return GSON;
     }
 
     public static YAMLMapper getYamlMapper() {

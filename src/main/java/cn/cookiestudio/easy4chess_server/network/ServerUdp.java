@@ -5,7 +5,10 @@ import cn.cookiestudio.easy4chess_server.network.packet.Packet;
 import cn.cookiestudio.easy4chess_server.network.packet.PidInfo;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
+
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetSocketAddress;
@@ -31,16 +34,18 @@ public class ServerUdp {
                 byte[] buffer = new byte[512];
                 DatagramPacket udpPacket = new DatagramPacket(buffer,0,512);
                 Packet packet = null;
+                String str = new String(udpPacket.getData());
                 try {
                     ServerUdp.this.udpSocket.receive(udpPacket);
-                    Server.getInstance().getLogger().info("Receive a packet");
-                    Server.getInstance().getLogger().info(new String(udpPacket.getData()));
-                    JsonObject jsonObject = new JsonParser().parse(new String(udpPacket.getData())).getAsJsonObject();
+                    Server.getInstance().getLogger().info("Receive a packet: \n" + str);
+                    JsonReader jsonReader = new JsonReader(new StringReader(str));
+                    jsonReader.setLenient(true);
+                    JsonObject jsonObject = new JsonParser().parse(jsonReader).getAsJsonObject();
                     if (!jsonObject.has("pid"))
                         continue;
                     if (!PidInfo.getPidMap().containsKey(jsonObject.get("pid").getAsInt()))
                         continue;
-                    packet = Server.getGson().fromJson(new String(udpPacket.getData()), PidInfo.getPidMap().get(jsonObject.get("pid").getAsInt()));
+                    packet = Server.getGSON().fromJson(new String(udpPacket.getData()), PidInfo.getPidMap().get(jsonObject.get("pid").getAsInt()));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
