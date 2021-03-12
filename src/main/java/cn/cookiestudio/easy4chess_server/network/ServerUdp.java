@@ -45,7 +45,7 @@ public class ServerUdp {
                         continue;
                     if (!PidInfo.getPidMap().containsKey(jsonObject.get("pid").getAsInt()))
                         continue;
-                    packet = Server.getGSON().fromJson(new String(udpPacket.getData()), PidInfo.getPidMap().get(jsonObject.get("pid").getAsInt()));
+                    packet = Server.getGSON().fromJson(jsonReader,PidInfo.getPidMap().get(jsonObject.get("pid").getAsInt()));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
