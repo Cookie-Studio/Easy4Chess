@@ -34,9 +34,9 @@ public class ServerUdp {
                 byte[] buffer = new byte[512];
                 DatagramPacket udpPacket = new DatagramPacket(buffer,0,512);
                 Packet packet = null;
-                String str = new String(udpPacket.getData());
                 try {
                     ServerUdp.this.udpSocket.receive(udpPacket);
+                    String str = new String(udpPacket.getData());
                     Server.getInstance().getLogger().info("Receive a packet: \n" + str);
                     JsonReader jsonReader = new JsonReader(new StringReader(str));
                     jsonReader.setLenient(true);
