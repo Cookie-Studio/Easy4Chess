@@ -12,10 +12,6 @@ public class LoginStatePacket extends Packet{
         this.state = state;
     }
 
-    public LoginStatePacket() {
-        this.pid = 1;
-    }
-
     public LoginStateEnum getState(){
         return this.state;
     }

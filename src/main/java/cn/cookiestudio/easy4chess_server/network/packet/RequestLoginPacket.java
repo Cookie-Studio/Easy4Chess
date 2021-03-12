@@ -26,10 +26,6 @@ public class RequestLoginPacket extends Packet{
         this.port = socketAddress.getPort();
     }
 
-    public RequestLoginPacket(){
-        this.pid = 0;
-    }
-
     public String getUserName() {
         return userName;
     }

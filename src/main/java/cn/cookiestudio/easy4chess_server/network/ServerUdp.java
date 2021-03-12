@@ -40,7 +40,7 @@ public class ServerUdp {
                         continue;
                     if (!PidInfo.getPidMap().containsKey(jsonObject.get("pid").getAsInt()))
                         continue;
-                    packet = Server.getJacksonJsonMapper().readValue(udpPacket.getData(), PidInfo.getPidMap().get(jsonObject.get("pid").getAsInt()));
+                    packet = Server.getGson().fromJson(new String(udpPacket.getData()), PidInfo.getPidMap().get(jsonObject.get("pid").getAsInt()));
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -5,10 +5,6 @@ public class RegisterInfoStatePacket extends Packet {
 
     private RegisterInfoStateEnum state;
 
-    public RegisterInfoStatePacket(){
-        this.pid = 6;
-    }
-
     public RegisterInfoStatePacket(RegisterInfoStateEnum state){
         this.pid = 6;
         this.state = state;

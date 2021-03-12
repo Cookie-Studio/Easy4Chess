@@ -13,10 +13,6 @@ public class DisconnectPacket extends Packet {
         this.user = user;
     }
 
-    public DisconnectPacket() {
-        this.pid = 4;
-    }
-
     public User getUser() {
         return user;
     }
