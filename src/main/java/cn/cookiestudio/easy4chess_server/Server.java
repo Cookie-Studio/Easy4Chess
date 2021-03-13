@@ -38,7 +38,7 @@ public class Server {
      }
 
     private static Server instance = null;
-    private int serverTick = 20;
+    private int serverTPS = 20;
     private Path serverPath = Paths.get(System.getProperty("user.dir"));
     private Logger logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
     private Scheduler scheduler;
@@ -131,8 +131,8 @@ public class Server {
         return instance;
     }
 
-    public int getServerTick() {
-        return serverTick;
+    public int getServerTPS() {
+        return serverTPS;
     }
 
     public Logger getLogger(){

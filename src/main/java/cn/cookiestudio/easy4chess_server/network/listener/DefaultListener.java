@@ -4,7 +4,6 @@ import cn.cookiestudio.easy4chess_server.Server;
 import cn.cookiestudio.easy4chess_server.network.packet.*;
 import cn.cookiestudio.easy4chess_server.user.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
-
 import java.io.IOException;
 import java.net.DatagramPacket;
 

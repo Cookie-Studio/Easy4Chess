@@ -3,7 +3,7 @@ package cn.cookiestudio.easy4chess_server.scheduler.tasks;
 public abstract class ServerTask {
     protected Runnable task;
     protected boolean cancel = false;
-    protected Runnable taskOnCompletion;
+    protected Runnable cancelTask;
     public ServerTask(Runnable task){
         this.task = task;
     }
@@ -16,8 +16,8 @@ public abstract class ServerTask {
 
     public void setCancel() {
         this.cancel = true;
-        if (this.taskOnCompletion != null)
-            this.taskOnCompletion.run();
+        if (this.cancelTask != null)
+            this.cancelTask.run();
     }
 
     public Runnable getTask() {
@@ -25,7 +25,7 @@ public abstract class ServerTask {
     }
 
     public void setCompletionTask(Runnable runnable){
-        this.taskOnCompletion = runnable;
+        this.cancelTask = runnable;
     }
 
     public void setTask(Runnable task) {
@@ -33,6 +33,6 @@ public abstract class ServerTask {
     }
 
     public Runnable getCompletionTask() {
-        return taskOnCompletion;
+        return cancelTask;
     }
 }
