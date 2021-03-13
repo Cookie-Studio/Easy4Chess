@@ -1,9 +1,5 @@
 package cn.cookiestudio.easy4chess_server.network.packet;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
@@ -24,10 +20,6 @@ public class RequestLoginPacket extends Packet{
         this.password = passWord;
         this.address = socketAddress.getAddress().getHostName();
         this.port = socketAddress.getPort();
-    }
-
-    public RequestLoginPacket() {
-        this.pid = 0;
     }
 
     public String getUserName() {

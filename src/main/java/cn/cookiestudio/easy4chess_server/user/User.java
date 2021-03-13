@@ -1,6 +1,7 @@
 package cn.cookiestudio.easy4chess_server.user;
 
 import cn.cookiestudio.easy4chess_server.Server;
+
 import java.net.InetSocketAddress;
 
 public class User {

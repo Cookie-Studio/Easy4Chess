@@ -10,10 +10,6 @@ public class RegisterInfoStatePacket extends Packet {
         this.state = state;
     }
 
-    public RegisterInfoStatePacket() {
-        this.pid = 6;
-    }
-
     public RegisterInfoStateEnum getState() {
         return state;
     }

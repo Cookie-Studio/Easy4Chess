@@ -3,6 +3,7 @@ package cn.cookiestudio.easy4chess_server.user;
 import cn.cookiestudio.easy4chess_server.Server;
 import cn.cookiestudio.easy4chess_server.network.packet.RegisterInfoStatePacket;
 import cn.cookiestudio.easy4chess_server.utils.Config;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
