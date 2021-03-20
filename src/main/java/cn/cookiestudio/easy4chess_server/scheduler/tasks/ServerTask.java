@@ -8,7 +8,7 @@ public abstract class ServerTask {
         this.task = task;
     }
 
-    public abstract void run();
+    public abstract void tryInvokeTask();//try if need to invoke the task(ep: if the task has a delay, the task will not be called unless the delay expires)
 
     public boolean isCancel() {
         return cancel;
@@ -24,7 +24,7 @@ public abstract class ServerTask {
         return task;
     }
 
-    public void setCompletionTask(Runnable runnable){
+    public void setCancelTask(Runnable runnable){
         this.cancelTask = runnable;
     }
 
@@ -32,7 +32,7 @@ public abstract class ServerTask {
         this.task = task;
     }
 
-    public Runnable getCompletionTask() {
+    public Runnable getCancelTask() {
         return cancelTask;
     }
 }

@@ -8,7 +8,7 @@ public class PeriodTask extends ServerTask{
         this.period = period;
     }
     @Override
-    public void run() {
+    public void tryInvokeTask() {
         if (this.isCancel())
             return;
         if (this.runningTick == 0){

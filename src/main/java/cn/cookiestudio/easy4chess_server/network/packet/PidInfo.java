@@ -11,7 +11,8 @@ public final class PidInfo {
         pid.put(3,ServerInfoPacket.class);
         pid.put(4,DisconnectPacket.class);
         pid.put(5,RegisterInfoPacket.class);
-        pid.put(6, RegisterInfoStatePacket.class);
+        pid.put(6,RegisterInfoStatePacket.class);
+        pid.put(7,RequestMatchPacket.class);
     }
 
     public static HashMap<Integer,Class<? extends Packet>> getPidMap(){

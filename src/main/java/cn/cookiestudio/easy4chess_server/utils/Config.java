@@ -247,12 +247,12 @@ public class Config {
                 }
             }
             if (async) {
-                Server.getInstance().getScheduler().registerTask(new DelayTask(() -> {
+                Server.getInstance().getScheduler().schedulerAsyncTask(new DelayTask(() -> {
                 try {
                     Utils.writeFile(file, content);
                 } catch (IOException e) {
                     Server.getInstance().getLogger().throwing(Level.ERROR, e);
-                }},0),true);
+                }},0));
             } else {
                 try {
                     Utils.writeFile(this.file, content);

@@ -3,9 +3,9 @@ package cn.cookiestudio.easy4chess_server;
 import cn.cookiestudio.easy4chess_server.network.ServerUdp;
 import cn.cookiestudio.easy4chess_server.network.listener.DefaultListener;
 import cn.cookiestudio.easy4chess_server.network.listener.ListenerManager;
+import cn.cookiestudio.easy4chess_server.player.Player;
 import cn.cookiestudio.easy4chess_server.scheduler.Scheduler;
-import cn.cookiestudio.easy4chess_server.user.User;
-import cn.cookiestudio.easy4chess_server.user.UserDataConfig;
+import cn.cookiestudio.easy4chess_server.player.PlayerDataConfig;
 import cn.cookiestudio.easy4chess_server.utils.Config;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -45,9 +45,9 @@ public class Server {
     private ListenerManager listenerManager = new ListenerManager();
     private ServerUdp serverUdp;
     private Config serverSets;
-    private UserDataConfig userData;
+    private PlayerDataConfig userData;
     private InetSocketAddress serverAddress;
-    private HashMap<String, User> users = new HashMap<>();
+    private HashMap<String, Player> users = new HashMap<>();
     public static void main(String[] args) {
         new Server();
     }
@@ -56,7 +56,7 @@ public class Server {
         this.logger.info("Server starting...");
         instance = this;
         this.loadServerYml();
-        this.userData = new UserDataConfig();
+        this.userData = new PlayerDataConfig();
         try {
             this.serverAddress = new InetSocketAddress(InetAddress.getByName((String)this.serverSets.get("ip")), (int)this.serverSets.get("port"));
             this.serverUdp = new ServerUdp(this.serverAddress);
@@ -81,17 +81,17 @@ public class Server {
         return serverPath;
     }
 
-    public HashMap<String, User> getUsers() {
+    public HashMap<String, Player> getUsers() {
         return users;
     }
 
-    public void addUser(User user){
-        this.users.put(user.getUserName(),user);
+    public void addUser(Player player){
+        this.users.put(player.getPlayerName(), player);
     }
 
-    public boolean removeUser(User user){
-        if (this.users.containsKey(user.getUserName())) return false;
-        this.users.remove(user.getUserName());
+    public boolean removeUser(Player player){
+        if (this.users.containsKey(player.getPlayerName())) return false;
+        this.users.remove(player.getPlayerName());
         return true;
     }
 
@@ -99,7 +99,7 @@ public class Server {
         return serverUdp;
     }
 
-    public UserDataConfig getUserData() {
+    public PlayerDataConfig getUserData() {
         return userData;
     }
 

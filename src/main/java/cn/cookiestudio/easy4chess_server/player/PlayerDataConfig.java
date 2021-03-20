@@ -1,4 +1,4 @@
-package cn.cookiestudio.easy4chess_server.user;
+package cn.cookiestudio.easy4chess_server.player;
 
 import cn.cookiestudio.easy4chess_server.Server;
 import cn.cookiestudio.easy4chess_server.network.packet.RegisterInfoStatePacket;
@@ -10,14 +10,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 
-public class UserDataConfig {
+public class PlayerDataConfig {
     private Config config;
 
-    public UserDataConfig(){
-        loadUserData();
+    public PlayerDataConfig(){
+        loadPlayerData();
     }
 
-    public boolean containUser(String user){
+    public boolean containPlayer(String user){
         return this.config.exists(user);
     }
 
@@ -51,7 +51,7 @@ public class UserDataConfig {
         return config;
     }
 
-    private void loadUserData() {
+    private void loadPlayerData() {
         Path ymlPath = Paths.get(Server.getInstance().getServerPath().toString(), "userdata.yml");
         if (!Files.exists(ymlPath)) {
             Server.getInstance().getLogger().error("Can't find userdata.yml,creating new file....");

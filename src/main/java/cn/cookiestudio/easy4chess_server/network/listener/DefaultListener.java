@@ -2,7 +2,7 @@ package cn.cookiestudio.easy4chess_server.network.listener;
 
 import cn.cookiestudio.easy4chess_server.Server;
 import cn.cookiestudio.easy4chess_server.network.packet.*;
-import cn.cookiestudio.easy4chess_server.user.User;
+import cn.cookiestudio.easy4chess_server.player.Player;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -10,22 +10,22 @@ import java.net.DatagramPacket;
 public class DefaultListener implements Listener{
     @PacketHandler
     public void onRequestLogin(RequestLoginPacket packet) throws IOException {
-        User user = new User(packet.getUserName(),packet.getPassword(),packet.getAddress());
+        Player player = new Player(packet.getUserName(),packet.getPassword(),packet.getAddress());
         //check if exist
-        if (!Server.getInstance().getUserData().containUser(packet.getUserName())) {
+        if (!Server.getInstance().getUserData().containPlayer(packet.getUserName())) {
             byte[] b = Server.getGSON().toJson(new LoginStatePacket(LoginStatePacket.LoginStateEnum.NO_INFO)).getBytes();
-            Server.getInstance().getServerUdp().getUdpSocket().send(new DatagramPacket(b,0,b.length,user.getAddress()));
+            Server.getInstance().getServerUdp().getUdpSocket().send(new DatagramPacket(b,0,b.length, player.getAddress()));
         }
         //check password
-        if (!Server.getInstance().getUserData().verifyPassword(user.getUserName(),user.getPassword())){
+        if (!Server.getInstance().getUserData().verifyPassword(player.getPlayerName(), player.getPassword())){
             byte[] b = Server.getGSON().toJson(new LoginStatePacket(LoginStatePacket.LoginStateEnum.WRONG_PASSWORD)).getBytes();
-            Server.getInstance().getServerUdp().getUdpSocket().send(new DatagramPacket(b,0,b.length,user.getAddress()));
+            Server.getInstance().getServerUdp().getUdpSocket().send(new DatagramPacket(b,0,b.length, player.getAddress()));
         }
 
-        Server.getInstance().addUser(user);
+        Server.getInstance().addUser(player);
         //send success packet
         byte[] b = Server.getGSON().toJson(new LoginStatePacket(LoginStatePacket.LoginStateEnum.SUCCESS)).getBytes();
-        Server.getInstance().getServerUdp().getUdpSocket().send(new DatagramPacket(b,0,b.length,user.getAddress()));
+        Server.getInstance().getServerUdp().getUdpSocket().send(new DatagramPacket(b,0,b.length, player.getAddress()));
     }
 
     @PacketHandler

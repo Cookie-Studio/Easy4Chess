@@ -1,17 +1,17 @@
 package cn.cookiestudio.easy4chess_server.network.packet;
 
-import cn.cookiestudio.easy4chess_server.user.User;
+import cn.cookiestudio.easy4chess_server.player.Player;
 
 public class DisconnectPacket extends Packet {
 
-    private User user;
+    private Player player;
 
-    public DisconnectPacket(User user) {
+    public DisconnectPacket(Player player) {
         this.pid = 4;
-        this.user = user;
+        this.player = player;
     }
 
-    public User getUser() {
-        return user;
+    public Player getUser() {
+        return player;
     }
 }

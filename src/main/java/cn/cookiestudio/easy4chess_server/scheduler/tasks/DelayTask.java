@@ -18,7 +18,7 @@ public class DelayTask extends ServerTask{
     }
 
     @Override
-    public void run() {
+    public void tryInvokeTask() {
         if (this.isCancel())
             return;
         this.runningTick++;

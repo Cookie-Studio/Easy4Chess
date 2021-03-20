@@ -9,7 +9,7 @@ public class DelayPeriodTimeTask extends DelayPeriodTask{
     }
 
     @Override
-    public void run() {
+    public void tryInvokeTask() {
         if (this.isCancel())
             return;
         this.runningTick++;

@@ -9,7 +9,7 @@ public class PeriodTimeTask extends PeriodTask{
     }
 
     @Override
-    public void run() {
+    public void tryInvokeTask() {
         if (this.isCancel())
             return;
         if (this.runningTick == 0){

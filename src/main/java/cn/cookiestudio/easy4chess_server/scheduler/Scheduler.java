@@ -2,7 +2,9 @@ package cn.cookiestudio.easy4chess_server.scheduler;
 
 import cn.cookiestudio.easy4chess_server.Server;
 import cn.cookiestudio.easy4chess_server.scheduler.tasks.ServerTask;
+import cn.cookiestudio.easy4chess_server.utils.PriorityType;
 
+import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -11,13 +13,24 @@ import java.util.concurrent.TimeUnit;
 public class Scheduler {
     private Thread mainThread;
     private ExecutorService asyncTaskPool = Executors.newCachedThreadPool();
-    private CopyOnWriteArrayList<ServerTask> mainThreadTasks = new CopyOnWriteArrayList<>();
+    private HashMap<Integer, CopyOnWriteArrayList<ServerTask>> mainThreadTasks = new HashMap();
     private CopyOnWriteArrayList<ServerTask> asyncTasks = new CopyOnWriteArrayList<>();
-    private double mainThreadTPS = 20.000;//main thread tps, not async thread's!
-    private double asyncThreadTPS = 20.000;//async thread tps, not main thread's!
+    private double mainThreadTPS = 20.000;//main thread tps, isn't async thread's!
     private int idealSleepMillisecond = (1000 / Server.getInstance().getServerTPS());
 
-    public CopyOnWriteArrayList<ServerTask> getMainThreadTasks() {
+    {
+        mainThreadTasks.put(PriorityType.LOWEST.ordinal(),new CopyOnWriteArrayList<>());
+        mainThreadTasks.put(PriorityType.LOWER.ordinal(),new CopyOnWriteArrayList<>());
+        mainThreadTasks.put(PriorityType.LOW.ordinal(),new CopyOnWriteArrayList<>());
+        mainThreadTasks.put(PriorityType.MEDIUMLOW.ordinal(),new CopyOnWriteArrayList<>());
+        mainThreadTasks.put(PriorityType.MEDIUM.ordinal(),new CopyOnWriteArrayList<>());
+        mainThreadTasks.put(PriorityType.MEDIUMHIGH.ordinal(),new CopyOnWriteArrayList<>());
+        mainThreadTasks.put(PriorityType.HIGH.ordinal(),new CopyOnWriteArrayList<>());
+        mainThreadTasks.put(PriorityType.HIGHER.ordinal(),new CopyOnWriteArrayList<>());
+        mainThreadTasks.put(PriorityType.HIGHEST.ordinal(),new CopyOnWriteArrayList<>());
+    }
+
+    public HashMap<Integer, CopyOnWriteArrayList<ServerTask>> getMainThreadTasks() {
         return mainThreadTasks;
     }
 
@@ -30,16 +43,27 @@ public class Scheduler {
     }
 
     public void schedulerTask(ServerTask task){
-        this.schedulerTask(task,false);
-    }
-
-    public void schedulerTask(ServerTask task, boolean async){
         if (this.mainThread.isInterrupted())
             return;
-        if (async)
-            this.asyncTasks.add(task);
-        else if(!async)
-            this.mainThreadTasks.add(task);
+        this.schedulerTask(task,PriorityType.MEDIUM);
+    }
+
+    /**
+     * @param task
+     * @param priority
+     * scheduler a main thread's task
+     * only main thread task can has priority
+     */
+    public void schedulerTask(ServerTask task,PriorityType priority){
+        if (this.mainThread.isInterrupted())
+            return;
+        this.mainThreadTasks.get(priority).add(task);
+    }
+
+    public void schedulerAsyncTask(ServerTask task){
+        if (this.asyncTaskPool.isShutdown())
+            return;
+        this.asyncTasks.add(task);
     }
 
     public double getMainThreadTPS() {
@@ -48,14 +72,6 @@ public class Scheduler {
 
     public String getShortMainThreadTPS(){
         return String.format("%.3f", this.mainThreadTPS);
-    }
-
-    public double getAsyncThreadTPS() {
-        return this.asyncThreadTPS;
-    }
-
-    public String getShortAsyncThreadTPS(){
-        return String.format("%.3f", this.asyncThreadTPS);
     }
 
     public void start(){
@@ -69,15 +85,23 @@ public class Scheduler {
             while(!mainThread.isInterrupted()){
                 long startTime = System.currentTimeMillis();
 
-                for (ServerTask asyncTask : Scheduler.this.asyncTasks)
+                /**
+                 * the async tasks are been submited to thread pool in main thread
+                 * used parallel stream to increase the submit speed
+                 */
+
+                Scheduler.this.asyncTasks.stream().parallel().forEach((asyncTask) ->
                     Scheduler.this.asyncTaskPool.execute(() -> {
-                        asyncTask.run();
-                        if (asyncTask.isCancel())
-                            Scheduler.this.asyncTasks.remove(asyncTask);
-                    });
-                for (ServerTask task : Scheduler.this.mainThreadTasks) {
-                    task.run();
-                    if (task.isCancel())Scheduler.this.mainThreadTasks.remove(task);
+                    asyncTask.tryInvokeTask();
+                    if (asyncTask.isCancel())
+                        Scheduler.this.asyncTasks.remove(asyncTask);
+                    }));
+
+                for (int i = PriorityType.LOWEST.ordinal();i <= PriorityType.HIGHEST.ordinal();i++) {
+                    for (ServerTask task : Scheduler.this.mainThreadTasks.get(i)){
+                        task.tryInvokeTask();
+                        if (task.isCancel())Scheduler.this.mainThreadTasks.remove(task);
+                    }
                 }
 
                 long endTime = System.currentTimeMillis();
@@ -91,6 +115,7 @@ public class Scheduler {
                     Scheduler.this.mainThreadTPS = 20.000 * ((double)Scheduler.this.idealSleepMillisecond / (double)spendTime);
                 }
             }
+
             while(mainThread.isInterrupted() && mainThreadTasks.size() != 0){//after interrupted
                 for (ServerTask asyncTask : Scheduler.this.asyncTasks)
                     Scheduler.this.asyncTaskPool.execute(() -> {
@@ -98,10 +123,12 @@ public class Scheduler {
                         Scheduler.this.asyncTasks.remove(asyncTask);
                     });
                 Scheduler.this.asyncTaskPool.shutdown();
-                Scheduler.this.mainThreadTasks.stream().forEach((t) -> {
-                    t.setCancel();
-                    Scheduler.this.mainThreadTasks.remove(t);
-                });
+                for (int i = PriorityType.LOWEST.ordinal();i <= PriorityType.HIGHEST.ordinal();i++) {
+                    for (ServerTask task : Scheduler.this.mainThreadTasks.get(i)){
+                        task.setCancel();
+                        Scheduler.this.mainThreadTasks.remove(task);
+                    }
+                }
             }
         }
     }
