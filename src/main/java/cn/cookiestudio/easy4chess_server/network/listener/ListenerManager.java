@@ -8,20 +8,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ListenerManager {
-    private final Map<Integer,ArrayList<ListenerMethod>> methodMap = new HashMap<>();
+    private final Map<PriorityType,ArrayList<ListenerMethod>> methodMap = new HashMap<>();
     public ListenerManager(){
-        methodMap.put(PriorityType.LOWEST.ordinal(),new ArrayList<>());
-        methodMap.put(PriorityType.LOWER.ordinal(),new ArrayList<>());
-        methodMap.put(PriorityType.LOW.ordinal(),new ArrayList<>());
-        methodMap.put(PriorityType.MEDIUMLOW.ordinal(),new ArrayList<>());
-        methodMap.put(PriorityType.MEDIUM.ordinal(),new ArrayList<>());
-        methodMap.put(PriorityType.MEDIUMHIGH.ordinal(),new ArrayList<>());
-        methodMap.put(PriorityType.HIGH.ordinal(),new ArrayList<>());
-        methodMap.put(PriorityType.HIGHER.ordinal(),new ArrayList<>());
-        methodMap.put(PriorityType.HIGHEST.ordinal(),new ArrayList<>());
+        methodMap.put(PriorityType.LOWEST,new ArrayList<>());
+        methodMap.put(PriorityType.LOWER,new ArrayList<>());
+        methodMap.put(PriorityType.LOW,new ArrayList<>());
+        methodMap.put(PriorityType.MEDIUMLOW,new ArrayList<>());
+        methodMap.put(PriorityType.MEDIUM,new ArrayList<>());
+        methodMap.put(PriorityType.MEDIUMHIGH,new ArrayList<>());
+        methodMap.put(PriorityType.HIGH,new ArrayList<>());
+        methodMap.put(PriorityType.HIGHER,new ArrayList<>());
+        methodMap.put(PriorityType.HIGHEST,new ArrayList<>());
     }
 
-    public Map<Integer, ArrayList<ListenerMethod>> getMethodMap() {
+    public Map<PriorityType, ArrayList<ListenerMethod>> getMethodMap() {
         return methodMap;
     }
 
@@ -36,7 +36,7 @@ public class ListenerManager {
 
     public <T extends Packet> T callPacket(T packet){
         for (int i = PriorityType.LOWEST.ordinal(); i<= PriorityType.HIGHEST.ordinal(); i++){
-            for (ListenerMethod lm : getMethodMap().get(i)){
+            for (ListenerMethod lm : getMethodMap().get(PriorityType.values()[i])){
                 if (!packet.isCancelled())
                     if (lm.packetMatched(packet))
                         try {

@@ -4,8 +4,7 @@ import cn.cookiestudio.easy4chess_server.Server;
 import cn.cookiestudio.easy4chess_server.network.packet.Packet;
 import cn.cookiestudio.easy4chess_server.network.packet.PidInfo;
 import cn.cookiestudio.easy4chess_server.scheduler.tasks.PeriodTask;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.gson.stream.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -32,16 +31,14 @@ public class ServerUdp {
                 ServerUdp.this.udpSocket.receive(udpPacket);
                 String str = new String(udpPacket.getData());
                 Server.getInstance().getLogger().info("Receive a packet: " + str);
-                JsonReader jsonReader = new JsonReader(new StringReader(str));
-                jsonReader.setLenient(true);
-                JsonObject jsonObject = new JsonParser().parse(jsonReader).getAsJsonObject();
-                if (!jsonObject.has("pid"))
+                JsonNode node =Server.getJacksonJsonMapper().readTree(str);
+                if (!node.has("pid"))
                     return;
-                if (!PidInfo.getPidMap().containsKey(jsonObject.get("pid").getAsInt()))
+                if (!PidInfo.getPidMap().containsKey(node.get("pid").asInt()))
                     return;
-                jsonReader = new JsonReader(new StringReader(str));//只能有效调用一次。
+                JsonReader jsonReader = new JsonReader(new StringReader(str));//只能有效调用一次。
                 jsonReader.setLenient(true);
-                packet = Server.getGSON().fromJson(jsonReader,PidInfo.getPidMap().get(jsonObject.get("pid").getAsInt()));
+                packet = Server.getGSON().fromJson(jsonReader,PidInfo.getPidMap().get(node.get("pid").asInt()));
                 packet.setInetSocketAddress(udpPacket.getAddress(),udpPacket.getPort());
             } catch (IOException e) {
                 e.printStackTrace();

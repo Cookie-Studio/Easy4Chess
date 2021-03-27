@@ -13,24 +13,24 @@ import java.util.concurrent.TimeUnit;
 public class Scheduler {
     private Thread mainThread;
     private ExecutorService asyncTaskPool = Executors.newCachedThreadPool();
-    private HashMap<Integer, CopyOnWriteArrayList<ServerTask>> mainThreadTasks = new HashMap();
+    private HashMap<PriorityType, CopyOnWriteArrayList<ServerTask>> mainThreadTasks = new HashMap();
     private CopyOnWriteArrayList<ServerTask> asyncTasks = new CopyOnWriteArrayList<>();
     private double mainThreadTPS = 20.000;//main thread tps, isn't async thread's!
     private int idealSleepMillisecond = (1000 / Server.getInstance().getServerTPS());
 
     {
-        mainThreadTasks.put(PriorityType.LOWEST.ordinal(),new CopyOnWriteArrayList<>());
-        mainThreadTasks.put(PriorityType.LOWER.ordinal(),new CopyOnWriteArrayList<>());
-        mainThreadTasks.put(PriorityType.LOW.ordinal(),new CopyOnWriteArrayList<>());
-        mainThreadTasks.put(PriorityType.MEDIUMLOW.ordinal(),new CopyOnWriteArrayList<>());
-        mainThreadTasks.put(PriorityType.MEDIUM.ordinal(),new CopyOnWriteArrayList<>());
-        mainThreadTasks.put(PriorityType.MEDIUMHIGH.ordinal(),new CopyOnWriteArrayList<>());
-        mainThreadTasks.put(PriorityType.HIGH.ordinal(),new CopyOnWriteArrayList<>());
-        mainThreadTasks.put(PriorityType.HIGHER.ordinal(),new CopyOnWriteArrayList<>());
-        mainThreadTasks.put(PriorityType.HIGHEST.ordinal(),new CopyOnWriteArrayList<>());
+        mainThreadTasks.put(PriorityType.LOWEST,new CopyOnWriteArrayList<>());
+        mainThreadTasks.put(PriorityType.LOWER,new CopyOnWriteArrayList<>());
+        mainThreadTasks.put(PriorityType.LOW,new CopyOnWriteArrayList<>());
+        mainThreadTasks.put(PriorityType.MEDIUMLOW,new CopyOnWriteArrayList<>());
+        mainThreadTasks.put(PriorityType.MEDIUM,new CopyOnWriteArrayList<>());
+        mainThreadTasks.put(PriorityType.MEDIUMHIGH,new CopyOnWriteArrayList<>());
+        mainThreadTasks.put(PriorityType.HIGH,new CopyOnWriteArrayList<>());
+        mainThreadTasks.put(PriorityType.HIGHER,new CopyOnWriteArrayList<>());
+        mainThreadTasks.put(PriorityType.HIGHEST,new CopyOnWriteArrayList<>());
     }
 
-    public HashMap<Integer, CopyOnWriteArrayList<ServerTask>> getMainThreadTasks() {
+    public HashMap<PriorityType, CopyOnWriteArrayList<ServerTask>> getMainThreadTasks() {
         return mainThreadTasks;
     }
 
@@ -98,7 +98,7 @@ public class Scheduler {
                     }));
 
                 for (int i = PriorityType.LOWEST.ordinal();i <= PriorityType.HIGHEST.ordinal();i++) {
-                    for (ServerTask task : Scheduler.this.mainThreadTasks.get(i)){
+                    for (ServerTask task : Scheduler.this.mainThreadTasks.get(PriorityType.values()[i])){
                         task.tryInvokeTask();
                         if (task.isCancel())Scheduler.this.mainThreadTasks.remove(task);
                     }
