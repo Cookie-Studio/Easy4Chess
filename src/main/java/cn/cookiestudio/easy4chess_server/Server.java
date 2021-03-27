@@ -55,20 +55,23 @@ public class Server {
     public Server(){
         this.logger.info("Server starting...");
         instance = this;
+
         this.loadServerYml();
-        this.userData = new PlayerDataConfig();
-        try {
-            this.serverAddress = new InetSocketAddress(InetAddress.getByName((String)this.serverSets.get("ip")), (int)this.serverSets.get("port"));
-            this.serverUdp = new ServerUdp(this.serverAddress);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         this.getLogger().info("Successfully loaded server info");
-        this.serverUdp.start();
-        this.getLogger().info("Successfully started udp service");
+
+        this.userData = new PlayerDataConfig();
+
         this.scheduler = new Scheduler();
         this.scheduler.start();
         this.getLogger().info("Successfully started scheduler");
+        try {
+            this.serverAddress = new InetSocketAddress(InetAddress.getByName((String)this.serverSets.get("ip")), (int)this.serverSets.get("port"));
+            this.serverUdp = new ServerUdp(this.serverAddress);
+            this.getLogger().info("Successfully started udp service");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         this.registerDefaultListener();
         this.getLogger().info("Successfully registered default listener");
     }
@@ -81,11 +84,11 @@ public class Server {
         return serverPath;
     }
 
-    public HashMap<String, Player> getUsers() {
+    public HashMap<String, Player> getPlayers() {
         return users;
     }
 
-    public void addUser(Player player){
+    public void addPlayer(Player player){
         this.users.put(player.getPlayerName(), player);
     }
 

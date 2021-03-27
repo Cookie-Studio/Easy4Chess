@@ -11,7 +11,7 @@ public class ServerInfoPacket extends Packet{
     public ServerInfoPacket(Server server){
         this.pid = 3;
         this.motd = server.getServerSets().getString("motd");
-        this.onlineCount = server.getUsers().size();
+        this.onlineCount = server.getPlayers().size();
     }
 
     public int getOnlineCount() {

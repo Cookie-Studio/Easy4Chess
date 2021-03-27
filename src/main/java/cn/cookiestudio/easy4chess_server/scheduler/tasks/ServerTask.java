@@ -1,9 +1,11 @@
 package cn.cookiestudio.easy4chess_server.scheduler.tasks;
 
 public abstract class ServerTask {
+
     protected Runnable task;
     protected boolean cancel = false;
     protected Runnable cancelTask;
+
     public ServerTask(Runnable task){
         this.task = task;
     }

@@ -1,18 +1,12 @@
 package cn.cookiestudio.easy4chess_server.network.packet;
 
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
 
 public class RequestLoginPacket extends Packet{
 
     private String userName;
 
     private String password;
-
-    private String address;
-
-    private int port;
 
     public RequestLoginPacket(String userName,String passWord,InetSocketAddress socketAddress){
         this.pid = 0;
@@ -28,14 +22,5 @@ public class RequestLoginPacket extends Packet{
 
     public String getPassword() {
         return password;
-    }
-
-    public InetSocketAddress getAddress() {
-        try {
-            return new InetSocketAddress(InetAddress.getByName(this.address),this.port);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

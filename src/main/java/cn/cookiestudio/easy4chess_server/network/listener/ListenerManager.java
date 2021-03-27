@@ -1,7 +1,7 @@
 package cn.cookiestudio.easy4chess_server.network.listener;
 
 import cn.cookiestudio.easy4chess_server.network.packet.Packet;
-
+import cn.cookiestudio.easy4chess_server.utils.PriorityType;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,15 +10,15 @@ import java.util.Map;
 public class ListenerManager {
     private final Map<Integer,ArrayList<ListenerMethod>> methodMap = new HashMap<>();
     public ListenerManager(){
-        methodMap.put(PriorityType.LOWEST,new ArrayList<>());
-        methodMap.put(PriorityType.LOWER,new ArrayList<>());
-        methodMap.put(PriorityType.LOW,new ArrayList<>());
-        methodMap.put(PriorityType.MEDIUMLOW,new ArrayList<>());
-        methodMap.put(PriorityType.MEDIUM,new ArrayList<>());
-        methodMap.put(PriorityType.MEDIUMHIGH,new ArrayList<>());
-        methodMap.put(PriorityType.HIGH,new ArrayList<>());
-        methodMap.put(PriorityType.HIGHER,new ArrayList<>());
-        methodMap.put(PriorityType.HIGHEST,new ArrayList<>());
+        methodMap.put(PriorityType.LOWEST.ordinal(),new ArrayList<>());
+        methodMap.put(PriorityType.LOWER.ordinal(),new ArrayList<>());
+        methodMap.put(PriorityType.LOW.ordinal(),new ArrayList<>());
+        methodMap.put(PriorityType.MEDIUMLOW.ordinal(),new ArrayList<>());
+        methodMap.put(PriorityType.MEDIUM.ordinal(),new ArrayList<>());
+        methodMap.put(PriorityType.MEDIUMHIGH.ordinal(),new ArrayList<>());
+        methodMap.put(PriorityType.HIGH.ordinal(),new ArrayList<>());
+        methodMap.put(PriorityType.HIGHER.ordinal(),new ArrayList<>());
+        methodMap.put(PriorityType.HIGHEST.ordinal(),new ArrayList<>());
     }
 
     public Map<Integer, ArrayList<ListenerMethod>> getMethodMap() {
@@ -34,18 +34,18 @@ public class ListenerManager {
         }
     }
 
-    public void callAllListener(Packet packet){
-        for (int i = PriorityType.LOWEST; i<= PriorityType.HIGHEST; i++){
+    public <T extends Packet> T callPacket(T packet){
+        for (int i = PriorityType.LOWEST.ordinal(); i<= PriorityType.HIGHEST.ordinal(); i++){
             for (ListenerMethod lm : getMethodMap().get(i)){
                 if (!packet.isCancelled())
-                    if (lm.isMatchPacket(packet))
+                    if (lm.packetMatched(packet))
                         try {
                             lm.getMethod().invoke(lm.getInstance(),packet);
                         } catch (Exception e) {
                             new PacketException(e).printStackTrace();
                         }
                 else
-                    if (lm.isMatchPacket(packet) && lm.isIgnoreCanceled())
+                    if (lm.packetMatched(packet) && lm.ignoreCanceled())
                         try {
                             lm.getMethod().invoke(lm.getInstance(),packet);
                         } catch (Exception e) {
@@ -53,10 +53,11 @@ public class ListenerManager {
                         }
             }
         }
+        return packet;
     }
     private class ListenerMethod{
         public int priority;
-        public boolean isIgnoreCanceled;
+        public boolean ifIgnoreCanceled;
         public Method method;
         public Listener instance;
 
@@ -64,8 +65,8 @@ public class ListenerManager {
             return priority;
         }
 
-        public boolean isIgnoreCanceled() {
-            return isIgnoreCanceled;
+        public boolean ignoreCanceled() {
+            return ifIgnoreCanceled;
         }
 
         public Method getMethod() {
@@ -79,12 +80,11 @@ public class ListenerManager {
         public ListenerMethod(Method method, Listener instance){
             PacketHandler annotation = method.getAnnotation(PacketHandler.class);
             this.method = method;
-            this.isIgnoreCanceled = annotation.IgnoreCanceled();
+            this.ifIgnoreCanceled = annotation.IgnoreCanceled();
             this.priority = annotation.priority();
             this.instance = instance;
         }
-        public boolean isMatchPacket(Packet packet){
-            return this.method.getParameterTypes()[0] == packet.getClass();
-        }
-    }
+        public boolean packetMatched(Packet packet){
+            return this.method.getParameterTypes()[0].isAssignableFrom(packet.getClass());
+        }}
 }

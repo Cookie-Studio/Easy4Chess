@@ -8,18 +8,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface PacketHandler {
-    int priority() default PriorityType.MEDIUM;
+    int priority() default 4;//MEDIUM is 4 QAQ
     boolean IgnoreCanceled() default false;
 }
 
-interface PriorityType{
-    int LOWEST = 1;
-    int LOWER = 2;
-    int LOW = 3;
-    int MEDIUMLOW = 4;
-    int MEDIUM = 5;
-    int MEDIUMHIGH = 6;
-    int HIGH = 7;
-    int HIGHER = 8;
-    int HIGHEST = 9;
-}
