@@ -1,7 +1,6 @@
 package cn.cookiestudio.easy4chess_server.utils;
 
 import cn.cookiestudio.easy4chess_server.Server;
-import cn.cookiestudio.easy4chess_server.scheduler.tasks.DelayTask;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
@@ -247,7 +246,7 @@ public class Config {
                 }
             }
             if (async) {
-                Server.getInstance().getScheduler().schedulerImmediateInvokeAsyncRunnable(() -> {
+                Server.getInstance().getScheduler().schedulerImmediateAsyncRunnable(() -> {
                 try {
                     Utils.writeFile(file, content);
                 } catch (IOException e) {

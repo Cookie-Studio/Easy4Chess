@@ -3,6 +3,7 @@ package cn.cookiestudio.easy4chess_server.scheduler;
 import cn.cookiestudio.easy4chess_server.Server;
 import cn.cookiestudio.easy4chess_server.scheduler.tasks.ServerTask;
 import cn.cookiestudio.easy4chess_server.utils.PriorityType;
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -10,6 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+@Getter
 public class Scheduler {
     private Thread mainThread;
     private ExecutorService asyncTaskPool = Executors.newCachedThreadPool();
@@ -30,18 +32,6 @@ public class Scheduler {
         mainThreadTasks.put(PriorityType.HIGHEST,new CopyOnWriteArrayList<>());
 
         this.mainThread = new Thread(new MainThreadRunnable());
-    }
-
-    public HashMap<PriorityType, CopyOnWriteArrayList<ServerTask>> getMainThreadTasks() {
-        return mainThreadTasks;
-    }
-
-    public CopyOnWriteArrayList<ServerTask> getAsyncTasks() {
-        return asyncTasks;
-    }
-
-    public int getIdealSleepMillisecond() {
-        return idealSleepMillisecond;
     }
 
     /**
@@ -65,20 +55,8 @@ public class Scheduler {
     }
 
     //在异步线程池调用一个立即执行的runnable，scheduler(Async)Task()不能保证立即执行
-    public synchronized void schedulerImmediateInvokeAsyncRunnable(Runnable runnable){
+    public synchronized void schedulerImmediateAsyncRunnable(Runnable runnable){
         this.asyncTaskPool.execute(runnable);
-    }
-
-    public double getMainThreadTPS() {
-        return this.mainThreadTPS;
-    }
-
-    public Thread getMainThread() {
-        return mainThread;
-    }
-
-    public ExecutorService getAsyncTaskPool() {
-        return asyncTaskPool;
     }
 
     public String getShortMainThreadTPS(){

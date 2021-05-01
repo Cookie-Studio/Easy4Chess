@@ -3,7 +3,6 @@ package cn.cookiestudio.easy4chess_server.player;
 import cn.cookiestudio.easy4chess_server.Server;
 import cn.cookiestudio.easy4chess_server.network.packet.RegisterInfoStatePacket;
 import cn.cookiestudio.easy4chess_server.utils.Config;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,12 +37,12 @@ public class PlayerDataConfig {
         return RegisterInfoStatePacket.RegisterInfoStateEnum.SUCCESS;
     }
 
-    public void writeKey(String key,Object value){
+    public void write(String key, Object value){
         this.config.set(key,value);
         this.config.save();
     }
 
-    public Object getKey(String key){
+    public Object get(String key){
         return this.config.get(key);
     }
 
@@ -65,4 +64,6 @@ public class PlayerDataConfig {
         }
         config = new Config(ymlPath);
     }
+
+
 }

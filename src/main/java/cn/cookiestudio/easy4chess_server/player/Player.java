@@ -55,9 +55,9 @@ public class Player {
         this.address = address;
         PlayerDataConfig userData = Server.getInstance().getUserData();
         if (Server.getInstance().getUserData().containPlayer(playerName)){
-            this.level = (int) userData.getKey(this.userName + ".level");
-            this.losingCount = (int) userData.getKey(this.userName + ".lose-count");
-            this.winningCount = (int) userData.getKey(this.userName + ".win-count");
+            this.level = (int) userData.get(this.userName + ".level");
+            this.losingCount = (int) userData.get(this.userName + ".lose-count");
+            this.winningCount = (int) userData.get(this.userName + ".win-count");
         }
     }
 
@@ -67,7 +67,7 @@ public class Player {
 
     public void setLevel(int level) {
         this.level = level;
-        Server.getInstance().getUserData().writeKey(this.userName + ".level",level);
+        Server.getInstance().getUserData().write(this.userName + ".level",level);
     }
 
     public int getLevel() {
@@ -76,17 +76,17 @@ public class Player {
 
     public void setLosingCount(int count) {
         this.losingCount = losingCount;
-        Server.getInstance().getUserData().writeKey(this.userName + ".lose-count",count);
+        Server.getInstance().getUserData().write(this.userName + ".lose-count",count);
     }
 
     public void setWinningCount(int winningCount) {
         this.winningCount = winningCount;
-        Server.getInstance().getUserData().writeKey(this.userName + ".win-count", winningCount);
+        Server.getInstance().getUserData().write(this.userName + ".win-count", winningCount);
     }
 
     public void setPlayerName(String userName){
         PlayerDataConfig playerDataConfig = Server.getInstance().getUserData();
-        playerDataConfig.getConfig().set(userName, playerDataConfig.getKey(this.userName));
+        playerDataConfig.getConfig().set(userName, playerDataConfig.get(this.userName));
         playerDataConfig.getConfig().remove(this.userName);
         playerDataConfig.getConfig().save();
         this.userName = userName;
